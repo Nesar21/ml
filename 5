@@ -1,30 +1,39 @@
 import numpy as np
-import seaborn as sns
+import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 
-# Visualize n-dimensional data using heatmap
-def visualize_heatmap():
-    data = np.random.rand(10, 5)
-    sns.heatmap(data, annot=True, cmap="YlGnBu")
-    plt.title("Heatmap of Synthetic 5D Data")
+# -------- PART 1: Box Plot for n-Dimensional Data --------
+def plot_nd_box():
+    data = pd.DataFrame(np.random.randn(100, 5), columns=[f"F{i}" for i in range(1, 6)])
+    sns.boxplot(data=data)
+    plt.title("Box Plot of 5D Data")
     plt.xlabel("Features")
-    plt.ylabel("Samples")
+    plt.ylabel("Value")
+    plt.grid(True)
     plt.show()
 
-# Min-Max algorithm implementation
-def minmax(depth, node_index, is_max, values, max_depth):
+# -------- PART 2: Alpha-Beta Pruning --------
+def alpha_beta(depth, idx, is_max, vals, alpha, beta, max_depth):
     if depth == max_depth:
-        return values[node_index]
-    left = minmax(depth+1, node_index*2, not is_max, values, max_depth)
-    right = minmax(depth+1, node_index*2+1, not is_max, values, max_depth)
-    return max(left, right) if is_max else min(left, right)
+        return vals[idx]
+    if is_max:
+        for i in range(2):
+            alpha = max(alpha, alpha_beta(depth+1, idx*2+i, False, vals, alpha, beta, max_depth))
+            if beta <= alpha: break
+        return alpha
+    else:
+        for i in range(2):
+            beta = min(beta, alpha_beta(depth+1, idx*2+i, True, vals, alpha, beta, max_depth))
+            if beta <= alpha: break
+        return beta
 
-# Main execution
+# -------- MAIN --------
 if __name__ == "__main__":
-    print("🌡️ Heatmap Visualization:")
-    visualize_heatmap()
+    print("📊 Box-Plot for n-Dimensional Data:")
+    plot_nd_box()
 
-    print("\n🎯 Min-Max Algorithm Execution:")
-    values = [3, 5, 6, 9, 1, 2, 0, -1]
-    result = minmax(0, 0, True, values, 3)
-    print(f"✅ Optimal value from Min-Max: {result}")
+    print("\n♟ Alpha-Beta Pruning Result:")
+    leaf_values = [3, 5, 6, 9, 1, 2, 0, -1]
+    result = alpha_beta(0, 0, True, leaf_values, float('-inf'), float('inf'), 3)
+    print(f"✅ Optimal Value: {result}")
