@@ -2,30 +2,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 from queue import PriorityQueue
 
-# -------------------------------
-# PART 1: Contour Plot
-# -------------------------------
+# ----------- Contour Plot -----------
 def visualize_contour():
     x = np.linspace(-5, 5, 100)
     y = np.linspace(-5, 5, 100)
     X, Y = np.meshgrid(x, y)
     Z = np.sin(X) * np.cos(Y)
 
-    plt.contourf(X, Y, Z, levels=20, cmap='viridis')
+    plt.contourf(X, Y, Z, 20, cmap='viridis')
     plt.colorbar()
     plt.title("Contour Plot of sin(x) * cos(y)")
     plt.xlabel("X-axis")
     plt.ylabel("Y-axis")
-    plt.grid(True)
     plt.show()
 
-# -------------------------------
-# PART 2: A* Algorithm (Grid)
-# -------------------------------
-def heuristic(a, b):
-    return abs(a[0] - b[0]) + abs(a[1] - b[1])  # Manhattan Distance
-
+# ----------- A* Algorithm -----------
 def a_star(start, goal, grid):
+    h = lambda a, b: abs(a[0] - b[0]) + abs(a[1] - b[1])
     rows, cols = len(grid), len(grid[0])
     open_set = PriorityQueue()
     open_set.put((0, start))
@@ -34,34 +27,29 @@ def a_star(start, goal, grid):
 
     while not open_set.empty():
         _, current = open_set.get()
-
         if current == goal:
-            path = []
+            path = [current]
             while current in came_from:
-                path.append(current)
                 current = came_from[current]
-            path.append(start)
+                path.append(current)
             return path[::-1]
 
         for dx, dy in [(0,1), (1,0), (0,-1), (-1,0)]:
-            neighbor = (current[0] + dx, current[1] + dy)
-            if 0 <= neighbor[0] < rows and 0 <= neighbor[1] < cols and grid[neighbor[0]][neighbor[1]] == 0:
+            nx, ny = current[0] + dx, current[1] + dy
+            neighbor = (nx, ny)
+            if 0 <= nx < rows and 0 <= ny < cols and grid[nx][ny] == 0:
                 temp_g = g_score[current] + 1
                 if neighbor not in g_score or temp_g < g_score[neighbor]:
                     g_score[neighbor] = temp_g
-                    f_score = temp_g + heuristic(neighbor, goal)
-                    open_set.put((f_score, neighbor))
+                    f = temp_g + h(neighbor, goal)
+                    open_set.put((f, neighbor))
                     came_from[neighbor] = current
     return None
 
-# -------------------------------
-# MAIN
-# -------------------------------
+# ----------- Run Program -----------
 if __name__ == "__main__":
-    print("📍 Contour Plot from a 2D slice of n-D data...")
     visualize_contour()
 
-    print("\n🔍 A* Pathfinding on Grid:")
     grid = [
         [0, 0, 0, 0, 0],
         [0, 1, 1, 1, 0],
@@ -69,10 +57,7 @@ if __name__ == "__main__":
         [1, 1, 0, 0, 0],
         [0, 0, 0, 1, 0]
     ]
-    start, goal = (0, 0), (4, 4)
-    path = a_star(start, goal, grid)
-
+    path = a_star((0, 0), (4, 4), grid)
+    print("Path Found:" if path else "No Path Found.")
     if path:
-        print("✅ Path found:", path)
-    else:
-        print("❌ No path found.")
+        print(path)
