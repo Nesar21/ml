@@ -1,0 +1,56 @@
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# -----------------------------
+# PART 1: Heatmap Visualization
+# -----------------------------
+
+def visualize_heatmap():
+    # Simulate a 2D slice of n-dimensional data (e.g., a correlation matrix or grid)
+    data = np.random.rand(6, 6)  # 6x6 matrix as a "view" from n-D
+
+    plt.figure(figsize=(6, 5))
+    sns.heatmap(data, annot=True, cmap="YlGnBu")
+    plt.title("Heatmap of Synthetic n-Dimensional Data")
+    plt.xlabel("Feature X")
+    plt.ylabel("Feature Y")
+    plt.show()
+
+# -----------------------------
+# PART 2: Min-Max Algorithm (Game Tree)
+# -----------------------------
+
+# Min-Max algorithm for a simple 2-player turn-based game
+def min_max(depth, node_index, is_maximizing, scores, height):
+    # Terminal condition
+    if depth == height:
+        return scores[node_index]
+
+    if is_maximizing:
+        return max(
+            min_max(depth + 1, node_index * 2, False, scores, height),
+            min_max(depth + 1, node_index * 2 + 1, False, scores, height)
+        )
+    else:
+        return min(
+            min_max(depth + 1, node_index * 2, True, scores, height),
+            min_max(depth + 1, node_index * 2 + 1, True, scores, height)
+        )
+
+# -----------------------------
+# MAIN PROGRAM
+# -----------------------------
+
+if __name__ == "__main__":
+    print("🔥 Visualizing Heatmap of Data...")
+    visualize_heatmap()
+
+    print("\n🧠 Running Min-Max Algorithm on Game Tree...")
+
+    # Example leaf node scores (for a game tree of height 3)
+    scores = [3, 5, 6, 9, 1, 2, 0, -1]
+    height = 3  # Because 2^3 = 8 leaves
+
+    best_score = min_max(0, 0, True, scores, height)
+    print(f"✅ The optimal value using Min-Max is: {best_score}")
