@@ -3,25 +3,15 @@ from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score
 
-# Load Titanic dataset
-df = pd.read_csv("titanic.csv")
-
-# Preprocess: fill missing and convert to numeric
-df = df[["Pclass", "Sex", "Age", "Survived"]].dropna()
+# Load and preprocess Titanic dataset
+df = pd.read_csv("titanic.csv")[["Pclass", "Sex", "Age", "Survived"]].dropna()
 df["Sex"] = df["Sex"].map({"male": 0, "female": 1})
 
-X = df[["Pclass", "Sex", "Age"]]
-y = df["Survived"]
-
-# Split data
+X, y = df[["Pclass", "Sex", "Age"]], df["Survived"]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-# Train Naive Bayes
-model = GaussianNB()
-model.fit(X_train, y_train)
+# Train and test Naive Bayes
+model = GaussianNB().fit(X_train, y_train)
+pred = model.predict(X_test)
 
-# Predict
-y_pred = model.predict(X_test)
-
-# Accuracy
-print("Accuracy:", round(accuracy_score(y_test, y_pred) * 100, 2), "%")
+print("🎯 Accuracy:", round(accuracy_score(y_test, pred) * 100, 2), "%")
