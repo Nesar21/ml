@@ -5,52 +5,30 @@ import matplotlib.pyplot as plt
 # -----------------------------
 # PART 1: Heatmap Visualization
 # -----------------------------
-
 def visualize_heatmap():
-    # Simulate a 2D slice of n-dimensional data (e.g., a correlation matrix or grid)
-    data = np.random.rand(6, 6)  # 6x6 matrix as a "view" from n-D
-
-    plt.figure(figsize=(6, 5))
+    data = np.random.rand(6, 6)  # 2D slice of n-D data
     sns.heatmap(data, annot=True, cmap="YlGnBu")
-    plt.title("Heatmap of Synthetic n-Dimensional Data")
-    plt.xlabel("Feature X")
-    plt.ylabel("Feature Y")
+    plt.title("Heatmap of Synthetic Data")
     plt.show()
 
 # -----------------------------
-# PART 2: Min-Max Algorithm (Game Tree)
+# PART 2: Min-Max Algorithm
 # -----------------------------
-
-# Min-Max algorithm for a simple 2-player turn-based game
-def min_max(depth, node_index, is_maximizing, scores, height):
-    # Terminal condition
+def min_max(depth, idx, is_max, scores, height):
     if depth == height:
-        return scores[node_index]
-
-    if is_maximizing:
-        return max(
-            min_max(depth + 1, node_index * 2, False, scores, height),
-            min_max(depth + 1, node_index * 2 + 1, False, scores, height)
-        )
-    else:
-        return min(
-            min_max(depth + 1, node_index * 2, True, scores, height),
-            min_max(depth + 1, node_index * 2 + 1, True, scores, height)
-        )
+        return scores[idx]
+    left = min_max(depth+1, idx*2, not is_max, scores, height)
+    right = min_max(depth+1, idx*2+1, not is_max, scores, height)
+    return max(left, right) if is_max else min(left, right)
 
 # -----------------------------
-# MAIN PROGRAM
+# MAIN
 # -----------------------------
-
 if __name__ == "__main__":
-    print("🔥 Visualizing Heatmap of Data...")
+    print("📊 Heatmap:")
     visualize_heatmap()
 
-    print("\n🧠 Running Min-Max Algorithm on Game Tree...")
-
-    # Example leaf node scores (for a game tree of height 3)
-    scores = [3, 5, 6, 9, 1, 2, 0, -1]
-    height = 3  # Because 2^3 = 8 leaves
-
-    best_score = min_max(0, 0, True, scores, height)
-    print(f"✅ The optimal value using Min-Max is: {best_score}")
+    print("\n🎮 Min-Max Algorithm:")
+    scores = [3, 5, 6, 9, 1, 2, 0, -1]  # Leaf scores
+    result = min_max(0, 0, True, scores, 3)
+    print(f"Optimal value: {result}")
