@@ -1,0 +1,49 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_classification
+import random
+
+# --------------------------
+# PART 1: Visualize n-Dimensional Data
+# --------------------------
+
+def visualize_nd_data(n_features=4):
+    # Generate synthetic data
+    X, y = make_classification(n_samples=100, n_features=n_features, n_informative=2, n_classes=2)
+
+    # Only plot the first 2 features as 2D scatter
+    plt.scatter(X[:, 0], X[:, 1], c=y, cmap='coolwarm')
+    plt.title(f"2D Scatter Plot from {n_features}-D Data")
+    plt.xlabel("Feature 1")
+    plt.ylabel("Feature 2")
+    plt.grid(True)
+    plt.show()
+
+# --------------------------
+# PART 2: Hill Climbing Algorithm
+# --------------------------
+
+# Objective function to maximize
+def objective(x):
+    return -x**2 + 4*x
+
+# Hill Climbing
+def hill_climbing(start_x, max_steps=100, step_size=0.1):
+    x = start_x
+    for step in range(max_steps):
+        new_x = x + random.uniform(-step_size, step_size)
+        if objective(new_x) > objective(x):
+            x = new_x
+    print(f"Best x found: {x:.4f}")
+    print(f"Maximum value: {objective(x):.4f}")
+
+# --------------------------
+# MAIN
+# --------------------------
+
+if __name__ == "__main__":
+    print("📊 Visualizing Data...")
+    visualize_nd_data(n_features=4)
+
+    print("\n🔼 Running Hill Climbing...")
+    hill_climbing(start_x=random.uniform(-5, 5))
