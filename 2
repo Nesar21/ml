@@ -2,73 +2,49 @@ import numpy as np
 import matplotlib.pyplot as plt
 from queue import PriorityQueue
 
-# -----------------------------
-# PART 1: 3D Surface Plot
-# -----------------------------
-
-def visualize_3d_surface():
-    # Define X and Y ranges
-    X = np.linspace(-5, 5, 50)
-    Y = np.linspace(-5, 5, 50)
-    X, Y = np.meshgrid(X, Y)
-
-    # Define Z = f(X, Y)
+# 3D Surface Plot
+def plot_3d_surface():
+    x = np.linspace(-5, 5, 50)
+    y = np.linspace(-5, 5, 50)
+    X, Y = np.meshgrid(x, y)
     Z = np.sin(np.sqrt(X**2 + Y**2))
 
-    # Plot the surface
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
+    ax = plt.figure().add_subplot(111, projection='3d')
     ax.plot_surface(X, Y, Z, cmap='viridis')
-
-    ax.set_title("3D Surface Plot of sin(sqrt(x² + y²))")
-    ax.set_xlabel("X axis")
-    ax.set_ylabel("Y axis")
-    ax.set_zlabel("Z axis")
+    ax.set_title("3D Surface: sin(sqrt(x² + y²))")
     plt.show()
 
-# -----------------------------
-# PART 2: Best First Search (BFS using priority queue)
-# -----------------------------
-
-def best_first_search(start, goal, graph):
+# Best First Search using PriorityQueue
+def best_first_search(graph, start, goal):
     visited = set()
     pq = PriorityQueue()
-    pq.put((0, start))  # (priority, node)
+    pq.put((0, start))
 
     while not pq.empty():
-        _, current = pq.get()
-        if current in visited:
+        _, node = pq.get()
+        if node in visited:
             continue
-        print(f"Visited: {current}")
-        visited.add(current)
+        print(f"Visited: {node}")
+        visited.add(node)
 
-        if current == goal:
+        if node == goal:
             print("Goal reached!")
             return
 
-        for neighbor, cost in graph[current]:
+        for neighbor, cost in graph.get(node, []):
             if neighbor not in visited:
                 pq.put((cost, neighbor))
 
-# -----------------------------
-# MAIN PROGRAM
-# -----------------------------
-
+# Main
 if __name__ == "__main__":
-    print("Visualizing 3D Surface...")
-    visualize_3d_surface()
+    plot_3d_surface()
 
-    print("\nRunning Best First Search...")
-
-    # Sample Graph (Node: [(Neighbor, Cost)])
     graph = {
         'A': [('B', 1), ('C', 3)],
         'B': [('D', 1), ('E', 4)],
         'C': [('F', 2)],
-        'D': [],
-        'E': [('G', 1)],
-        'F': [],
-        'G': []
+        'D': [], 'E': [('G', 1)],
+        'F': [], 'G': []
     }
 
-    best_first_search(start='A', goal='G', graph=graph)
+    best_first_search(graph, 'A', 'G')
