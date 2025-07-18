@@ -1,39 +1,26 @@
-import matplotlib.pyplot as plt
-import seaborn as sns
 from sklearn.datasets import load_iris
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
 
-# Load Iris dataset
-iris = load_iris()
-X = iris.data
+# Load and reduce dimensions
+X = PCA(n_components=2).fit_transform(load_iris().data)
 
-# Reduce dimensions for visualization
-pca = PCA(n_components=2)
-X_pca = pca.fit_transform(X)
+# Clustering
+labels_single = AgglomerativeClustering(n_clusters=3, linkage='single').fit_predict(X)
+labels_complete = AgglomerativeClustering(n_clusters=3, linkage='complete').fit_predict(X)
 
-# --- Single Linkage ---
-single_link = AgglomerativeClustering(n_clusters=3, linkage='single')
-labels_single = single_link.fit_predict(X)
-
-# --- Complete Linkage ---
-complete_link = AgglomerativeClustering(n_clusters=3, linkage='complete')
-labels_complete = complete_link.fit_predict(X)
-
-# --- Plot Single Linkage ---
+# Plotting
 plt.figure(figsize=(10, 4))
+
 plt.subplot(1, 2, 1)
-sns.scatterplot(x=X_pca[:, 0], y=X_pca[:, 1], hue=labels_single, palette='viridis')
-plt.title("Agglomerative Clustering - Single Linkage")
-plt.xlabel("PCA Component 1")
-plt.ylabel("PCA Component 2")
+plt.scatter(X[:, 0], X[:, 1], c=labels_single, cmap='viridis', edgecolor='k')
+plt.title("Single Linkage")
 
-# --- Plot Complete Linkage ---
 plt.subplot(1, 2, 2)
-sns.scatterplot(x=X_pca[:, 0], y=X_pca[:, 1], hue=labels_complete, palette='Set2')
-plt.title("Agglomerative Clustering - Complete Linkage")
-plt.xlabel("PCA Component 1")
-plt.ylabel("PCA Component 2")
+plt.scatter(X[:, 0], X[:, 1], c=labels_complete, cmap='Set2', edgecolor='k')
+plt.title("Complete Linkage")
 
+plt.suptitle("Agglomerative Clustering on Iris Dataset", fontsize=14)
 plt.tight_layout()
 plt.show()
