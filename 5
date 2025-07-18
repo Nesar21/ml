@@ -1,0 +1,65 @@
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# ----------------------------------
+# PART 1: Box Plot for n-Dimensional Data
+# ----------------------------------
+
+def visualize_box_plot():
+    # Simulate 5-dimensional data (100 samples)
+    data = np.random.randn(100, 5)
+    df = pd.DataFrame(data, columns=[f"Feature_{i+1}" for i in range(5)])
+
+    # Create box plot
+    plt.figure(figsize=(8, 6))
+    sns.boxplot(data=df)
+    plt.title("Box Plot of 5D Synthetic Data")
+    plt.xlabel("Features")
+    plt.ylabel("Value Range")
+    plt.grid(True)
+    plt.show()
+
+# ----------------------------------
+# PART 2: Alpha-Beta Pruning Algorithm
+# ----------------------------------
+
+def alpha_beta(depth, node_index, is_max, scores, alpha, beta, height):
+    if depth == height:
+        return scores[node_index]
+
+    if is_max:
+        max_eval = float('-inf')
+        for i in range(2):  # two children
+            val = alpha_beta(depth + 1, node_index * 2 + i, False, scores, alpha, beta, height)
+            max_eval = max(max_eval, val)
+            alpha = max(alpha, val)
+            if beta <= alpha:
+                break  # beta cutoff
+        return max_eval
+    else:
+        min_eval = float('inf')
+        for i in range(2):  # two children
+            val = alpha_beta(depth + 1, node_index * 2 + i, True, scores, alpha, beta, height)
+            min_eval = min(min_eval, val)
+            beta = min(beta, val)
+            if beta <= alpha:
+                break  # alpha cutoff
+        return min_eval
+
+# ----------------------------------
+# MAIN PROGRAM
+# ----------------------------------
+
+if __name__ == "__main__":
+    print("📊 Visualizing Box Plot for n-D Data...")
+    visualize_box_plot()
+
+    print("\n♟️ Running Alpha-Beta Pruning on Game Tree...")
+
+    scores = [3, 5, 6, 9, 1, 2, 0, -1]  # leaf values
+    height = 3  # log2(8) = 3
+
+    result = alpha_beta(0, 0, True, scores, float('-inf'), float('inf'), height)
+    print(f"✅ Optimal value using Alpha-Beta Pruning: {result}")
