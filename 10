@@ -1,39 +1,33 @@
 import matplotlib.pyplot as plt
-import seaborn as sns
 from sklearn.datasets import load_iris
 from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 
-# Load the dataset
+# Load dataset
 iris = load_iris()
-X = iris.data
-y = iris.target
-target_names = iris.target_names
+X, y = iris.data, iris.target
 
-# ----- PCA -----
-pca = PCA(n_components=2)
-X_pca = pca.fit_transform(X)
+# PCA
+X_pca = PCA(n_components=2).fit_transform(X)
 
-# Plot PCA
+# LDA
+X_lda = LDA(n_components=2).fit_transform(X, y)
+
+# Plotting
 plt.figure(figsize=(10, 4))
+
 plt.subplot(1, 2, 1)
-sns.scatterplot(x=X_pca[:, 0], y=X_pca[:, 1], hue=iris.target, palette='deep')
-plt.title("PCA: First 2 Principal Components")
+plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y, cmap='Set1', edgecolor='k')
+plt.title("PCA - Principal Components")
 plt.xlabel("PC1")
 plt.ylabel("PC2")
-plt.legend(title="Class")
 
-# ----- LDA -----
-lda = LDA(n_components=2)
-X_lda = lda.fit_transform(X, y)
-
-# Plot LDA
 plt.subplot(1, 2, 2)
-sns.scatterplot(x=X_lda[:, 0], y=X_lda[:, 1], hue=iris.target, palette='deep')
-plt.title("LDA: First 2 Linear Discriminants")
+plt.scatter(X_lda[:, 0], X_lda[:, 1], c=y, cmap='Set1', edgecolor='k')
+plt.title("LDA - Linear Discriminants")
 plt.xlabel("LD1")
 plt.ylabel("LD2")
-plt.legend(title="Class")
 
+plt.suptitle("PCA vs LDA on Iris Dataset", fontsize=14)
 plt.tight_layout()
 plt.show()
