@@ -2,33 +2,29 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-# -----------------------------
-# PART 1: Heatmap Visualization
-# -----------------------------
+# Visualize n-dimensional data using heatmap
 def visualize_heatmap():
-    data = np.random.rand(6, 6)  # 2D slice of n-D data
+    data = np.random.rand(10, 5)
     sns.heatmap(data, annot=True, cmap="YlGnBu")
-    plt.title("Heatmap of Synthetic Data")
+    plt.title("Heatmap of Synthetic 5D Data")
+    plt.xlabel("Features")
+    plt.ylabel("Samples")
     plt.show()
 
-# -----------------------------
-# PART 2: Min-Max Algorithm
-# -----------------------------
-def min_max(depth, idx, is_max, scores, height):
-    if depth == height:
-        return scores[idx]
-    left = min_max(depth+1, idx*2, not is_max, scores, height)
-    right = min_max(depth+1, idx*2+1, not is_max, scores, height)
+# Min-Max algorithm implementation
+def minmax(depth, node_index, is_max, values, max_depth):
+    if depth == max_depth:
+        return values[node_index]
+    left = minmax(depth+1, node_index*2, not is_max, values, max_depth)
+    right = minmax(depth+1, node_index*2+1, not is_max, values, max_depth)
     return max(left, right) if is_max else min(left, right)
 
-# -----------------------------
-# MAIN
-# -----------------------------
+# Main execution
 if __name__ == "__main__":
-    print("📊 Heatmap:")
+    print("🌡️ Heatmap Visualization:")
     visualize_heatmap()
 
-    print("\n🎮 Min-Max Algorithm:")
-    scores = [3, 5, 6, 9, 1, 2, 0, -1]  # Leaf scores
-    result = min_max(0, 0, True, scores, 3)
-    print(f"Optimal value: {result}")
+    print("\n🎯 Min-Max Algorithm Execution:")
+    values = [3, 5, 6, 9, 1, 2, 0, -1]
+    result = minmax(0, 0, True, values, 3)
+    print(f"✅ Optimal value from Min-Max: {result}")
