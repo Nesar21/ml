@@ -1,63 +1,45 @@
-import numpy as np
-import matplotlib.pyplot as plt
+import numpy as np, matplotlib.pyplot as plt
 from queue import PriorityQueue
 
-# ----------- Contour Plot -----------
 def visualize_contour():
-    x = np.linspace(-5, 5, 100)
-    y = np.linspace(-5, 5, 100)
+    x, y = np.linspace(-5, 5, 100), np.linspace(-5, 5, 100)
     X, Y = np.meshgrid(x, y)
     Z = np.sin(X) * np.cos(Y)
-
-    plt.contourf(X, Y, Z, 20, cmap='viridis')
-    plt.colorbar()
+    plt.contourf(X, Y, Z, 20, cmap='viridis'); plt.colorbar()
     plt.title("Contour Plot of sin(x) * cos(y)")
-    plt.xlabel("X-axis")
-    plt.ylabel("Y-axis")
     plt.show()
 
-# ----------- A* Algorithm -----------
 def a_star(start, goal, grid):
-    h = lambda a, b: abs(a[0] - b[0]) + abs(a[1] - b[1])
     rows, cols = len(grid), len(grid[0])
-    open_set = PriorityQueue()
+    open_set, g, came_from = PriorityQueue(), {start: 0}, {}
     open_set.put((0, start))
-    came_from = {}
-    g_score = {start: 0}
 
     while not open_set.empty():
         _, current = open_set.get()
         if current == goal:
-            path = [current]
-            while current in came_from:
-                current = came_from[current]
-                path.append(current)
-            return path[::-1]
+            path = []
+            while current in came_from: path.append(current); current = came_from[current]
+            return [start] + path[::-1]
 
-        for dx, dy in [(0,1), (1,0), (0,-1), (-1,0)]:
-            nx, ny = current[0] + dx, current[1] + dy
-            neighbor = (nx, ny)
-            if 0 <= nx < rows and 0 <= ny < cols and grid[nx][ny] == 0:
-                temp_g = g_score[current] + 1
-                if neighbor not in g_score or temp_g < g_score[neighbor]:
-                    g_score[neighbor] = temp_g
-                    f = temp_g + h(neighbor, goal)
-                    open_set.put((f, neighbor))
-                    came_from[neighbor] = current
+        for dx, dy in [(0,1),(1,0),(0,-1),(-1,0)]:
+            nx, ny = current[0]+dx, current[1]+dy
+            if 0 <= nx < rows and 0 <= ny < cols and grid[nx][ny]==0:
+                new_g = g[current] + 1
+                if (nx,ny) not in g or new_g < g[(nx,ny)]:
+                    g[(nx,ny)] = new_g
+                    f = new_g + abs(nx-goal[0]) + abs(ny-goal[1])
+                    open_set.put((f, (nx,ny)))
+                    came_from[(nx,ny)] = current
     return None
 
-# ----------- Run Program -----------
 if __name__ == "__main__":
     visualize_contour()
-
     grid = [
-        [0, 0, 0, 0, 0],
-        [0, 1, 1, 1, 0],
-        [0, 0, 0, 1, 0],
-        [1, 1, 0, 0, 0],
-        [0, 0, 0, 1, 0]
+        [0,0,0,0,0],
+        [0,1,1,1,0],
+        [0,0,0,1,0],
+        [1,1,0,0,0],
+        [0,0,0,1,0]
     ]
-    path = a_star((0, 0), (4, 4), grid)
-    print("Path Found:" if path else "No Path Found.")
-    if path:
-        print(path)
+    path = a_star((0,0),(4,4),grid)
+    print("Path Found:", path if path else "No Path")
