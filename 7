@@ -5,29 +5,23 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 
-# Load and split dataset
+# Load dataset
 df = fetch_openml("glass", version=1, as_frame=True).frame
-X = df.drop("Type", axis=1)
-y = df["Type"]
+X, y = df.drop("Type", axis=1), df["Type"]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-# KNN classifiers
-eu_knn = KNeighborsClassifier(n_neighbors=3, metric='euclidean').fit(X_train, y_train)
-man_knn = KNeighborsClassifier(n_neighbors=3, metric='manhattan').fit(X_train, y_train)
+# Train & evaluate for both metrics
+results = {}
+for metric in ["euclidean", "manhattan"]:
+    model = KNeighborsClassifier(n_neighbors=3, metric=metric).fit(X_train, y_train)
+    results[metric] = accuracy_score(y_test, model.predict(X_test))
 
-# Predictions
-pred_eu = eu_knn.predict(X_test)
-pred_man = man_knn.predict(X_test)
+# Print results
+for m, acc in results.items():
+    print(f"{m.capitalize()} Accuracy: {round(acc*100,2)}%")
 
-# Accuracy
-acc_eu = accuracy_score(y_test, pred_eu)
-acc_man = accuracy_score(y_test, pred_man)
-
-print("Euclidean Accuracy:", round(acc_eu * 100, 2), "%")
-print("Manhattan Accuracy:", round(acc_man * 100, 2), "%")
-
-# Bar plot
-plt.bar(["Euclidean", "Manhattan"], [acc_eu, acc_man], color=["blue", "orange"])
+# Plot comparison
+plt.bar(results.keys(), results.values(), color=["blue", "orange"])
 plt.title("KNN Accuracy Comparison (k=3)")
 plt.ylabel("Accuracy")
 plt.ylim(0, 1)
