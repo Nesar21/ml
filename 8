@@ -2,29 +2,22 @@ from sklearn.datasets import load_iris
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 
-# Load data
-iris = load_iris()
-X = iris.data[:, :2]  # using first two features
+# Load first two features
+X = load_iris().data[:, :2]
 
-# Apply K-Means clustering
-kmeans = KMeans(n_clusters=3, random_state=0)
-labels = kmeans.fit_predict(X)
+# Train K-Means and get labels + centers
+kmeans = KMeans(n_clusters=3, random_state=0).fit(X)
+labels, centers = kmeans.labels_, kmeans.cluster_centers_
 
-# Print cluster labels
-print("Cluster labels for each data point:")
-print(labels)
+# Print results
+print("Cluster labels:\n", labels)
+print("\nCluster centers:\n", centers)
 
-# Optional: Print cluster centers
-print("\nCluster Centers (Sepal Length, Sepal Width):")
-print(kmeans.cluster_centers_)
-
-# Plot clusters
+# Plot clusters with centers
 plt.scatter(X[:, 0], X[:, 1], c=labels, cmap='viridis', edgecolor='k')
-plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1],
-            s=200, c='red', marker='X', label="Centroids")
-plt.title("K-Means Clustering on Iris (2 features)")
+plt.scatter(centers[:, 0], centers[:, 1], s=200, c='red', marker='X', label="Centroids")
+plt.title("K-Means on Iris (Sepal Length vs Width)")
 plt.xlabel("Sepal Length")
 plt.ylabel("Sepal Width")
 plt.legend()
-plt.grid(True)
 plt.show()
